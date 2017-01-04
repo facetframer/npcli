@@ -48,7 +48,6 @@ def get_names_rec(node):
     else:
         raise ValueError(node)
 
-
 def uses_data(expr):
     names = get_names(expr)
     return 'd' in names or 'data' in names
@@ -88,9 +87,9 @@ def main():
         LOGGER.debug('Data length: %s ', len(data))
         LOGGER.debug('Data shape: %s ', data.shape)
         context.update(data=data, d=data)
-
-    LOGGER.debug('data: %r', data)
-
+        LOGGER.debug('data: %r', data)
+    else:
+        LOGGER.debug('takes no data')
 
     LOGGER.debug('context: %r', module_dict)
 
