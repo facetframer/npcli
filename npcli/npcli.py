@@ -45,6 +45,9 @@ def get_names_rec(node):
         return set()
     elif isinstance(node, ast.Tuple):
         return set.union(*map(get_names_rec, node.elts))
+    elif isinstance(node, ast.Slice):
+        children = (node.lower, node.step, node.upper)
+        return set.union(*map(get_names_rec, [x for x in children if x is not None]))
     else:
         raise ValueError(node)
 
