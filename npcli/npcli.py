@@ -60,6 +60,8 @@ def main():
     parser.add_argument('expr', type=str, help='Expression involving d a numpy array')
     parser.add_argument('--debug', action='store_true', help='Print debug output')
 
+    parser.add_argument('--input-format', '-I', type=str, help='Dtype of the data read in')
+
     format_group = parser.add_mutually_exclusive_group()
     format_group.add_argument('--raw-format', '-R', type=str, help='Output as a flat numpy array with this format')
     format_group.add_argument('--raw', action='store_true', help='Result is a string that should be written to standard out')
@@ -75,7 +77,6 @@ def main():
     if args.debug:
         logging.basicConfig(level=logging.DEBUG)
 
-
     module_dict = dict()
     for m in args.module:
         module_dict.update(**imp(m))
@@ -86,7 +87,7 @@ def main():
     context = module_dict.copy()
 
     if uses_data(args.expr):
-        data = read_data()
+        data = read_data(args.input_format)
         LOGGER.debug('Data length: %s ', len(data))
         LOGGER.debug('Data shape: %s ', data.shape)
         context.update(data=data, d=data)
@@ -97,11 +98,10 @@ def main():
     LOGGER.debug('context: %r', module_dict)
 
     result = multiline_eval(args.expr, context)
-    if isinstance(result, (float, int)):
+    if isinstance(result, (float, int, numpy.number)):
         result = numpy.array([result])
 
     LOGGER.debug('Result length: %s ', len(result))
-
 
     if args.raw:
         sys.stdout.write(result)
@@ -120,14 +120,15 @@ def multiline_eval(expr, context):
     exec(compile(exec_expr, 'file', 'exec'), context)
     return eval(compile(eval_expr, 'file', 'eval'), context)
 
-def read_data():
-    data = numpy.array([map(float, line.split()) for line in sys.stdin.read().splitlines()])
-    if data.shape[1] == 1:
-        # Treat a stream of numbers a 1-D array
-        return data.flatten()
-    else:
-        # Everything else is 2-d
+def read_data(input_format):
+    if input_format is not None:
+        data = numpy.fromstring(sys.stdin.read(), dtype=input_format)
         return data
+    else:
+        data = numpy.array([map(float, line.split()) for line in sys.stdin.read().splitlines()])
+        if data.shape[1] == 1:
+            # Treat a stream of numbers a 1-D array
+            return data.flatten()
 
 def imp(s):
     name = s.split('.')[0]
