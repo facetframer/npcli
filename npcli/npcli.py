@@ -117,8 +117,8 @@ def multiline_eval(expr, context):
     tree = ast.parse(expr)
     eval_expr = ast.Expression(tree.body[-1].value)
     exec_expr = ast.Module(tree.body[:-1])
-    exec(compile(exec_expr, 'file', 'exec'), context)
-    return eval(compile(eval_expr, 'file', 'eval'), context)
+    exec(compile(exec_expr, 'file', 'exec'), context) #pylint: disable=exec-used
+    return eval(compile(eval_expr, 'file', 'eval'), context) #pylint: disable=eval-used
 
 def read_data(input_format):
     if input_format is not None:
