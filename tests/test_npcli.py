@@ -29,3 +29,12 @@ class NpcliTest(unittest.TestCase):
         with io.open(source3, 'w', encoding='utf8') as stream:
             stream.write(u'64\n128\n256\n')
         self.assertEquals(self.run_cli(io.BytesIO(b'1\n2\n4\n'), 'd + d1 + d2', source2, source3), b'73.0\n146.0\n292.0\n')
+
+    def test_complex_expressions(self):
+        self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd[1]')
+        self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd[1:]')
+        self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  '(d,)')
+        self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  '[d]')
+        self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd + 1')
+        self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd ** 2')
+        self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd.sum()')

@@ -124,7 +124,7 @@ def run(stdin_stream, args):
     elif args.raw_format:
         return (numpy.array(result, dtype=args.raw_format),)
     elif args.repr:
-        return (repr(result),)
+        return (repr(result).encode('utf8'),)
     else:
         output = BytesIO()
         numpy.savetxt(output, result, fmt=b'%s')
