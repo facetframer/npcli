@@ -1,5 +1,18 @@
 import setuptools
-import distutils.core
+
+from setuptools.command.test import test as TestCommand
+
+
+class ToxTest(TestCommand):
+    user_options = []
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+
+    def run_tests(self):
+        import tox
+        tox.cmdline()
+
 
 setuptools.setup(
     name='npcli',
@@ -10,12 +23,12 @@ setuptools.setup(
     license='GPLv3',
     keywords='',
     url='',
+    install_requires=['numpy'],
     packages=[],
-    long_description=open('README.md').read(),
     entry_points={
         'console_scripts': ['npcli=npcli.npcli:main']
     },
     classifiers=[
     ],
-    test_suite='nose.collector'
+    cmdclass = {'test': ToxTest},
 )

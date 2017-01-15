@@ -1,9 +1,13 @@
 #!/usr/bin/python
 
+# make code as python 3 compatible as possible
+from __future__ import absolute_import, division, print_function, unicode_literals
+
 import argparse
 import logging
 import sys
 import ast
+from io import BytesIO
 
 import numpy
 
@@ -14,6 +18,7 @@ def get_names(expr):
     return get_names_rec(tree)
 
 def union(sets):
+    sets = list(sets)
     return set.union(*sets) if sets else set()
 
 def get_names_rec(node):
@@ -57,7 +62,7 @@ def uses_stdin(expr):
     names = get_names(expr)
     return 'd' in names or 'data' in names
 
-def main():
+def build_parser():
     parser = argparse.ArgumentParser(description='Interact with numpy from the command line')
     parser.add_argument('expr', type=str, help='Expression involving d, a numpy array')
     parser.add_argument('--debug', action='store_true', help='Print debug output')
@@ -73,8 +78,12 @@ def main():
         '--module', '-m',
         action='append',
         help='Result is a string that should be written to standard out')
+    return parser
 
-    args = parser.parse_args(sys.argv[1:])
+
+def run(stdin_stream, args):
+    parser = build_parser()
+    args = parser.parse_args(args)
     args.module = args.module or []
 
     if args.debug:
@@ -90,7 +99,7 @@ def main():
     context = module_dict.copy()
 
     if uses_stdin(args.expr):
-        data = read_data(args.input_format, sys.stdin)
+        data = read_data(args.input_format, stdin_stream)
         context.update(data=data, d=data)
     else:
         LOGGER.debug('takes no data')
@@ -108,16 +117,23 @@ def main():
     if isinstance(result, (float, int, numpy.number)):
         result = numpy.array([result])
 
-    LOGGER.debug('Result length: %s ', len(result))
+    LOGGER.debug('Result length: %f ', len(result))
 
     if args.raw:
-        sys.stdout.write(result)
+        return (result,)
     elif args.raw_format:
-        sys.stdout.write(numpy.array(result, dtype=args.raw_format))
+        return (numpy.array(result, dtype=args.raw_format),)
     elif args.repr:
-        sys.stdout.write(repr(result))
+        return (repr(result),)
     else:
-        numpy.savetxt(sys.stdout, result, fmt='%s')
+        output = BytesIO()
+        numpy.savetxt(output, result, fmt=b'%s')
+        return (output.getvalue(),)
+
+def main():
+    for part in run(sys.stdin, sys.argv[1:]):
+        sys.stdout.write(part)
+        sys.stdout.flush()
 
 def multiline_eval(expr, context):
     "Evaluate several lines of input, returning the result of the last line"
@@ -131,7 +147,8 @@ def read_data(input_format, stream):
     if input_format is not None:
         data = numpy.fromstring(stream.read(), dtype=input_format)
     else:
-        data = numpy.array([map(float, line.split()) for line in stream.read().splitlines()])
+        data = numpy.array([list(map(float, line.split())) for line in stream.read().splitlines()])
+        print(data)
         if data.shape[1] == 1:
             # Treat a stream of numbers a 1-D array
             data = data.flatten()
