@@ -52,9 +52,9 @@ seq 10 | npcli  -e 'd*2' -e 'd + 4' -e 'd * 3' -e 'd - 12'  -e 'd / 6'
 
 # Just open a file for goodness sake
 
-This pretty valid, most programming languages are turing complete and everything that is done
-here can be done in a python file with subprocesses. And above a certain size one-liners
-become unweildy
+This pretty valid, most programming languages are Turing-Complete and everything that is done
+here can be done in a python file with subprocesses. Above a certain size one-liners
+become unwieldy
 
 The cost of doing this is that you actually have to go to the effort of opening file,
 and doing these sort of things in files can take a lot of typing.
