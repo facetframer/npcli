@@ -129,7 +129,7 @@ def run(stdin_stream, args):
 
     context = module_dict.copy()
 
-    expressions = ([args.expr] if args.expr else [] + args.more_expressions)
+    expressions = ([args.expr] if args.expr else []) + args.more_expressions
 
     if not expressions:
         return
