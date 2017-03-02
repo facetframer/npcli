@@ -73,7 +73,16 @@ def uses_stdin(expr):
 
 def build_parser():
     parser = argparse.ArgumentParser(description='Interact with numpy from the command line')
-    parser.add_argument('expr', type=str, help='Expression involving d, a numpy array')
+    parser.add_argument('expr', type=str, help='Expression involving d, a numpy array', nargs='?')
+    parser.add_argument(
+        '--expr',
+        '-e',
+        type=str,
+        help='Expression involving d, a numpy array. Multipe expressions get chained',
+        dest='more_expressions',
+        action='append',
+        metavar='EXPR')
+
     parser.add_argument('--debug', action='store_true', help='Print debug output')
     parser.add_argument('data_sources', type=str, nargs='*', help='Files to read data from. Stored in d1, d2 etc')
     parser.add_argument('--input-format', '-I', type=str, help='Dtype of the data read in. "lines" for a list of lines. "str" for a string. "csv" for csv, "pandas" for a pandas csv')
@@ -120,7 +129,12 @@ def run(stdin_stream, args):
 
     context = module_dict.copy()
 
-    if uses_stdin(args.expr):
+    expressions = ([args.expr] if args.expr else [] + args.more_expressions)
+
+    if not expressions:
+        return
+
+    if uses_stdin(expressions[0]):
         data = read_data(args.input_format, stdin_stream)
         context.update(data=data, d=data)
     else:
@@ -135,7 +149,11 @@ def run(stdin_stream, args):
 
     LOGGER.debug('context: %r', module_dict)
 
-    result = multiline_eval(args.expr, context)
+    for expr in expressions:
+        context['d'] = multiline_eval(expr, context)
+
+    result = context['d']
+
     if isinstance(result, (float, int, numpy.number)):
         result = numpy.array([result])
 
