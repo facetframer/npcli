@@ -81,7 +81,8 @@ def build_parser():
     format_group = parser.add_mutually_exclusive_group()
     format_group.add_argument('--output-format', '-O', type=str, help='Output as a flat numpy array with this format')
     format_group.add_argument('--raw', action='store_true', help='Result is a string that should be written to standard out')
-    format_group.add_argument('--repr', action='store_true', help='Output a repr of the result')
+    format_group.add_argument('--repr', '-D', action='store_true', help='Output a repr of the result. Often used for _D_ebug')
+    format_group.add_argument('--no-result', '-n', action='store_true', help="Discard result")
     parser.add_argument(
         '--module', '-m',
         action='append',
@@ -139,7 +140,9 @@ def run(stdin_stream, args):
 
     LOGGER.debug('Result length: %f ', len(result))
 
-    if args.raw:
+    if args.no_result:
+        return tuple()
+    elif args.raw:
         return (result,)
     elif args.output_format:
         return (numpy.array(result, dtype=args.output_format),)
