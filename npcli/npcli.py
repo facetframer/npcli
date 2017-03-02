@@ -76,9 +76,8 @@ def build_parser():
     parser.add_argument('expr', type=str, help='Expression involving d, a numpy array')
     parser.add_argument('--debug', action='store_true', help='Print debug output')
     parser.add_argument('data_sources', type=str, nargs='*', help='Files to read data from. Stored in d1, d2 etc')
-
-    parser.add_argument('--input-format', '-I', type=str, help='Dtype of the data read in')
-
+    parser.add_argument('--input-format', '-I', type=str, help='Dtype of the data read in. "lines" for a list of lines. "str" for a string. "csv" for csv, "pandas" for a pandas csv')
+    parser.add_argument('--kitchen-sink', '-K', action='store_true', help='Import a lot of useful things into the execution scope')
     format_group = parser.add_mutually_exclusive_group()
     format_group.add_argument('--raw-format', '-R', type=str, help='Output as a flat numpy array with this format')
     format_group.add_argument('--raw', action='store_true', help='Result is a string that should be written to standard out')
@@ -101,6 +100,18 @@ def run(stdin_stream, args):
     module_dict = dict()
     for m in args.module:
         module_dict.update(**imp(m))
+
+    if args.kitchen_sink:
+        # Lazy because these may not be installed
+        import pandas
+        import pylab
+
+        for x in [pandas, numpy, pylab]:
+            module_dict.update(imp_all(x))
+
+        module_dict['pandas'] = pandas
+        module_dict['numpy'] = numpy
+        module_dict['pylab'] = pylab
 
     module_dict['np'] = numpy
     LOGGER.debug('Module dict: %r', module_dict)
