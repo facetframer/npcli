@@ -188,21 +188,56 @@ def multiline_eval(expr, context):
     exec(compile(exec_expr, 'file', 'exec'), context) #pylint: disable=exec-used
     return eval(compile(eval_expr, 'file', 'eval'), context) #pylint: disable=eval-used
 
+def maybe_float(x):
+    try:
+        return float(x)
+    except ValueError:
+        return x
+
+
 def read_data(input_format, stream):
-    if input_format is not None:
+    if input_format == 'lines':
+        data = [x.decode('utf8').strip('\n') for x in stream.readlines()]
+    elif input_format == 'str':
+        return stream.read()
+    elif input_format == 'csv':
+        data = numpy.genfromtxt(stream, delimiter=',')
+    elif input_format == 'pandas':
+        import pandas
+        data = pandas.DataFrame.from_csv(stream)
+    elif input_format is not None:
         data = numpy.fromstring(stream.read(), dtype=input_format)
+
     else:
-        data = numpy.array([list(map(float, line.split())) for line in stream.read().splitlines()])
-        print(data)
-        if data.shape[1] == 1:
+        data = numpy.array([list(map(maybe_float, line.split())) for line in stream.read().splitlines()])
+        if len(data.shape) > 1 and data.shape[1] == 1:
             # Treat a stream of numbers a 1-D array
             data = data.flatten()
 
     LOGGER.debug('Data length: %s ', len(data))
-    LOGGER.debug('Data shape: %s ', data.shape)
+
+    if hasattr(data, 'shape'):
+        LOGGER.debug('Data shape: %s ', data.shape)
+    else:
+        LOGGER.debug('Data shape: None')
+
     LOGGER.debug('data: %r', data)
     return data
 
 def imp(s):
     name = s.split('.')[0]
     return {name: __import__(s)}
+
+def imp_all(s):
+    if isinstance(s, str):
+        name = s.split('.')[0]
+        obj = __import__(s)
+        for x in name[1:]:
+            obj = getattr(obj, x)
+    else:
+        obj = s
+
+    if hasattr(obj, '__all__'):
+        return dict((k, getattr(obj, k)) for k in obj.__all__)
+    else:
+        return dict(vars(obj))
