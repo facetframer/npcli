@@ -115,6 +115,7 @@ def run(stdin_stream, args):
         module_dict['pylab'] = pylab
 
     module_dict['np'] = numpy
+    module_dict['numpy'] = numpy
     LOGGER.debug('Module dict: %r', module_dict)
 
     context = module_dict.copy()
