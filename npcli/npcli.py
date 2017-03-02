@@ -73,7 +73,7 @@ def uses_stdin(expr):
 
 def build_parser():
     parser = argparse.ArgumentParser(description='Interact with numpy from the command line')
-    parser.add_argument('expr', type=str, help='Expression involving d, a numpy array', nargs='?')
+    parser.add_argument('expr', type=str, help='Expression involving d, a numpy array')
     parser.add_argument(
         '--expr',
         '-e',
