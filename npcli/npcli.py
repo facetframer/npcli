@@ -42,6 +42,8 @@ def get_names_rec(node):
     elif isinstance(node, ast.UnaryOp):
         LOGGER.debug(dir(node.operand))
         return get_names_rec(node.operand)
+    elif isinstance(node, ast.Str):
+        return set()
     elif isinstance(node, ast.Name):
         return set([node.id])
     elif isinstance(node, ast.Attribute):
@@ -49,12 +51,19 @@ def get_names_rec(node):
     elif isinstance(node, ast.Num):
         return set()
     elif isinstance(node, ast.Tuple):
-        return set.union(*map(get_names_rec, node.elts))
+        return union(map(get_names_rec, node.elts))
     elif isinstance(node, ast.List):
-        return set.union(*map(get_names_rec, node.elts))
+        return union(map(get_names_rec, node.elts))
+    elif isinstance(node, ast.comprehension):
+        return (union(map(get_names_rec, node.ifs)) | get_names_rec(node.iter) | get_names_rec(node.target))
+    elif isinstance(node, ast.ListComp):
+        return get_names_rec(node.elt) | union(map(get_names_rec, node.generators))
     elif isinstance(node, ast.Slice):
         children = (node.lower, node.step, node.upper)
-        return set.union(*map(get_names_rec, [x for x in children if x is not None]))
+        true_children = [x for x in children if x is not None]
+        return union(map(get_names_rec, true_children)) if true_children else set()
+    elif isinstance(node, ast.ExtSlice):
+        return union(map(get_names_rec, node.dims)) if node.dims else set()
     else:
         raise ValueError(node)
 
