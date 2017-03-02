@@ -139,7 +139,10 @@ def run(stdin_stream, args):
     if isinstance(result, (float, int, numpy.number)):
         result = numpy.array([result])
 
-    LOGGER.debug('Result length: %f ', len(result))
+    try:
+        LOGGER.debug('Result length: %f ', len(result))
+    except TypeError:
+        LOGGER.debug('Result has no length length: %r! ', result)
 
     if args.no_result:
         return tuple()
