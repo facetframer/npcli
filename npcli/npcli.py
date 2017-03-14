@@ -115,20 +115,21 @@ def run(stdin_stream, args):
         # Lazy because these may not be installed
         import pandas
         import pylab
+        import pandas
 
         for x in [pandas, numpy, pylab]:
             module_dict.update(imp_all(x))
 
-        module_dict['pandas'] = pandas
         module_dict['numpy'] = numpy
         module_dict['pylab'] = pylab
+        module_dict['pandas'] = pandas
+        module_dict['pd'] = pandas
 
     module_dict['np'] = numpy
     module_dict['numpy'] = numpy
     LOGGER.debug('Module dict: %r', module_dict)
 
     context = module_dict.copy()
-
     expressions = ([args.expr] if args.expr else []) + (args.more_expressions or [])
 
     if not expressions:
