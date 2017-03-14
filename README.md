@@ -61,3 +61,13 @@ and doing these sort of things in files can take a lot of typing.
 
 You also lose the simplicity of the "modify", "press enter", "see if it works" cycle
 that the command line gives you.
+
+
+# Alternatives and prior work
+
+* xargs
+* awk
+* perl command line invokation
+* pyline
+* pyp
+* Rio - A similar tool in R (that gives you access to the marverlously succinct ggplot!)
