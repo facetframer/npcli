@@ -184,10 +184,23 @@ def main():
 def multiline_eval(expr, context):
     "Evaluate several lines of input, returning the result of the last line"
     tree = ast.parse(expr)
+    is_eval = isinstance(tree.body[-1], ast.Expr)
+
     eval_expr = ast.Expression(tree.body[-1].value)
     exec_expr = ast.Module(tree.body[:-1])
+
+    if is_eval:
+        final_eval_expr = ast.Expression(tree.body[-1].value)
+    else:
+        final_exec_expr = ast.Module([tree.body[-1]])
+
     exec(compile(exec_expr, 'file', 'exec'), context) #pylint: disable=exec-used
-    return eval(compile(eval_expr, 'file', 'eval'), context) #pylint: disable=eval-used
+
+    if is_eval:
+        return eval(compile(eval_expr, 'file', 'eval'), context) #pylint: disable=eval-used
+    else:
+        exec(compile(final_exec_expr, 'file', 'exec'), context) #pylint: disable=exec-used
+        return None
 
 def maybe_float(x):
     try:
