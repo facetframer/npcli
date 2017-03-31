@@ -102,6 +102,7 @@ def build_parser():
         '--module', '-m',
         action='append',
         help='Result is a string that should be written to standard out')
+    parser.add_argument('-f', metavar='data_source', action='append', dest='flag_data_sources')
     return parser
 
 
@@ -146,6 +147,12 @@ def run(stdin_stream, args):
         context.update(data=data, d=data)
     else:
         LOGGER.debug('takes no data')
+
+    if args.data_sources and args.flag_data_sources:
+        raise Exception("Either use -f for every source or None")
+
+    if args.flag_data_sources:
+        args.data_sources = args.flag_data_sources
 
 
     if args.code:
