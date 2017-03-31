@@ -3,6 +3,7 @@
 # make code as python 3 compatible as possible
 from __future__ import absolute_import, division, print_function, unicode_literals
 
+import autopep8
 import argparse
 import logging
 import sys
@@ -83,6 +84,7 @@ def build_parser():
         action='append',
         metavar='EXPR')
 
+    parser.add_argument('--code', action='store_true', default=False, help='Produce python code rather than running')
     parser.add_argument('--debug', action='store_true', help='Print debug output')
     parser.add_argument('data_sources', type=str, nargs='*', help='Files to read data from. Stored in d1, d2 etc')
     parser.add_argument('--input-format', '-I', type=str, help='Dtype of the data read in. "lines" for a list of lines. "str" for a string. "csv" for csv, "pandas" for a pandas csv')
@@ -144,6 +146,13 @@ def run(stdin_stream, args):
         context.update(data=data, d=data)
     else:
         LOGGER.debug('takes no data')
+
+
+    if args.code:
+        # Lazy import because this is big
+        import autopep8
+        program = '\n'.join(expressions) + '\n'
+        return autopep8.fix_string(program)
 
     for index, source in enumerate(args.data_sources):
         with open(source) as stream:
