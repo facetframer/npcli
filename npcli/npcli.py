@@ -89,6 +89,8 @@ def build_parser():
     parser.add_argument('data_sources', type=str, nargs='*', help='Files to read data from. Stored in d1, d2 etc')
     parser.add_argument('--input-format', '-I', type=str, help='Dtype of the data read in. "lines" for a list of lines. "str" for a string. "csv" for csv, "pandas" for a pandas csv')
     parser.add_argument('--kitchen-sink', '-K', action='store_true', help='Import a lot of useful things into the execution scope')
+    parser.add_argument('--name', '-N', nargs=2, action='append', type=str, help='A named data source')
+
     format_group = parser.add_mutually_exclusive_group()
     format_group.add_argument(
         '--output-format',
@@ -105,6 +107,11 @@ def build_parser():
     parser.add_argument('-f', metavar='data_source', action='append', dest='flag_data_sources')
     return parser
 
+
+def parse_named_source(format, (name, source)):
+    with open(source) as stream:
+        data = read_data(format, stream)
+        return (name, data)
 
 def run(stdin_stream, args):
     parser = build_parser()
@@ -167,6 +174,9 @@ def run(stdin_stream, args):
             name1 = 'd{}'.format(index + 1)
             name2 = 'data{}'.format(index + 1)
             context.update({name1: data, name2: data})
+
+    named_sources = dict([parse_named_source(args.input_format, name_spec) for name_spec in args.name])
+    context.update(named_sources)
 
     LOGGER.debug('context: %r', module_dict)
 
