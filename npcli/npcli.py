@@ -88,7 +88,11 @@ def build_parser():
     parser.add_argument('--input-format', '-I', type=str, help='Dtype of the data read in. "lines" for a list of lines. "str" for a string. "csv" for csv, "pandas" for a pandas csv')
     parser.add_argument('--kitchen-sink', '-K', action='store_true', help='Import a lot of useful things into the execution scope')
     format_group = parser.add_mutually_exclusive_group()
-    format_group.add_argument('--output-format', '-O', type=str, help='Output as a flat numpy array with this format')
+    format_group.add_argument(
+        '--output-format',
+        '-O',
+        type=str,
+        help='Output as a flat numpy array with this format. "str" for a string')
     format_group.add_argument('--raw', action='store_true', help='Result is a string that should be written to standard out')
     format_group.add_argument('--repr', '-D', action='store_true', help='Output a repr of the result. Often used for _D_ebug')
     format_group.add_argument('--no-result', '-n', action='store_true', help="Discard result")
@@ -168,7 +172,10 @@ def run(stdin_stream, args):
     elif args.raw:
         return (result,)
     elif args.output_format:
-        return (numpy.array(result, dtype=args.output_format),)
+        if args.output_format == 'str':
+            return result
+        else:
+            return (numpy.array(result, dtype=args.output_format),)
     elif args.repr:
         return (repr(result).encode('utf8'),)
     else:
