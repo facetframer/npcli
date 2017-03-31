@@ -67,7 +67,15 @@ that the command line gives you.
 
 * xargs
 * awk
-* perl command line invokation
+* perl command line invocation
 * pyline
 * pyp
 * Rio - A similar tool in R (that gives you access to the marverlously succinct ggplot!)
+
+# Caveats
+
+`npcli` uses `argparse`.
+`argparse` appears to be not be able to deal with repeated flags (`-e 1 -e second`) and repeated optional position args (i.e. data sources), it may error out when given valid input.
+This can be circumvented by using the `-f` flag in preference to positional arguments.
+However, we still allow positional arguments in the interest of discoverability. 
+I'm open to this being a bad decision.
