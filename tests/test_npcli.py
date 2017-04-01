@@ -1,6 +1,7 @@
 
 # make code as python 3 compatible as possible
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 import io
 import os
@@ -38,3 +39,31 @@ class NpcliTest(unittest.TestCase):
         self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd + 1')
         self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd ** 2')
         self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd.sum()')
+
+    def test_named_sources(self):
+        one_read, one_write = os.pipe()
+        two_read, two_write = os.pipe()
+
+        one_stream = os.fdopen(one_write, 'w')
+        two_stream = os.fdopen(two_write, 'w')
+
+        one_stream.write('1\n2\n')
+        one_stream.close()
+        two_stream.write('10\n20\n')
+        two_stream.close()
+
+        one_file = '/dev/fd/{}'.format(one_read)
+        two_file = '/dev/fd/{}'.format(two_read)
+
+        result = self.run_cli(
+            None,
+            '--name', "one", one_file,
+            '--name', "two", two_file,
+            'one + two')
+
+        self.assertEquals(result, '11.0\n22.0\n')
+
+
+
+
+
