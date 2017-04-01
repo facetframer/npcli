@@ -87,3 +87,17 @@ that the command line gives you.
 This can be circumvented by using the `-f` flag in preference to positional arguments.
 However, we still allow positional arguments in the interest of discoverability.
 I'm open to this being a bad decision.
+
+# Contributing
+
+There are unit tests: you can run them with
+
+```
+python setup.py test
+```
+
+This run the tests with `tox` for a quicker test run use:
+
+```
+nosetests tess
+```
