@@ -174,7 +174,7 @@ def run(stdin_stream, args):
             name2 = 'data{}'.format(index + 1)
             context.update({name1: data, name2: data})
 
-    named_sources = dict([parse_named_source(args.input_format, name_spec) for name_spec in args.name])
+    named_sources = dict([parse_named_source(args.input_format, name_spec) for name_spec in args.name]) if args.name is not None else dict()
     context.update(named_sources)
 
     LOGGER.debug('context: %r', module_dict)
