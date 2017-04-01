@@ -53,19 +53,6 @@ npcli --name one <(seq 100) --name two <(seq 201 300) 'one + two'
 
 ```
 
-# Just open a file for goodness sake
-
-It is very easy to do more on the command line that you should.
-Most programming languages are Turing-Complete and everything that is done
-here can be done in a python file with subprocesses. Above a certain size one-liners
-become unwieldy
-
-The cost of doing this is that you actually have to go to the effort of opening file,
-and doing these sort of things in files can take a lot of typing.
-
-You also lose the simplicity of the "modify", "press enter", "see if it works" cycle
-that the command line gives you.
-
 # Usage
 
 ```
@@ -118,13 +105,6 @@ optional arguments:
 * *pyp*
 * *Rio* - A similar tool in R (that gives you access to the marverlously succinct ggplot!)
 
-# Caveats
-
-`npcli` uses `argparse`.
-`argparse` appears to be not be able to deal with repeated flags (`-e 1 -e second`) and repeated optional position args (i.e. data sources), it may error out when given valid input.
-This can be circumvented by using the `-f` flag in preference to positional arguments.
-However, we still allow positional arguments in the interest of discoverability.
-I'm open to this being a bad decision.
 
 # Contributing
 
@@ -139,3 +119,24 @@ This run the tests with `tox` for a quicker test run use:
 ```
 nosetests tess
 ```
+
+# Caveats
+
+`npcli` uses `argparse`.
+`argparse` appears to be not be able to deal with repeated flags (`-e 1 -e second`) and repeated optional position args (i.e. data sources), it may error out when given valid input.
+This can be circumvented by using the `-f` flag in preference to positional arguments.
+However, we still allow positional arguments in the interest of discoverability.
+I'm open to this being a bad decision.
+
+# Just open a file for goodness sake
+
+It is very easy to do more on the command line that you should.
+Most programming languages are Turing-Complete and everything that is done
+here can be done in a python file with subprocesses. Above a certain size one-liners
+become unwieldy
+
+The cost of doing this is that you actually have to go to the effort of opening file,
+and doing these sort of things in files can take a lot of typing.
+
+You also lose the simplicity of the "modify", "press enter", "see if it works" cycle
+that the command line gives you.
