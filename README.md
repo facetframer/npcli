@@ -17,7 +17,7 @@ Command line pipelines are wonderful things. Some nice properties include:
 
 However the command line is sometimes slightly... lacking. Particularly when it comes to
 things like maths. There are ad-hoc, single purpose commands that can help, things like
-`feedgnuplot` or sum or similar, but they will always only solve one problem.
+`feedgnuplot` or `sum` or similar, but they will always only solve one problem.
 
 Here we try to solve a general class of problems by welding python (any numpy)
 to the command line so that anything you can do in python can be done
@@ -46,13 +46,12 @@ curl "http://real-chart.finance.yahoo.com/table.csv?s=GOOG" | head -n 100 | npcl
 
 # Chain together operations
 seq 10 | npcli  -e 'd*2' -e 'd + 4' -e 'd * 3' -e 'd - 12'  -e 'd / 6'
-
-
 ```
 
 # Just open a file for goodness sake
 
-This pretty valid, most programming languages are Turing-Complete and everything that is done
+It is very easy to do more on the command line that you should.
+Most programming languages are Turing-Complete and everything that is done
 here can be done in a python file with subprocesses. Above a certain size one-liners
 become unwieldy
 
@@ -65,17 +64,17 @@ that the command line gives you.
 
 # Alternatives and prior work
 
-* xargs
-* awk
-* perl command line invocation
-* pyline
-* pyp
-* Rio - A similar tool in R (that gives you access to the marverlously succinct ggplot!)
+* *xargs*
+* *awk*
+* *perl command line invocation*
+* *pyline*
+* *pyp*
+* *Rio* - A similar tool in R (that gives you access to the marverlously succinct ggplot!)
 
 # Caveats
 
 `npcli` uses `argparse`.
 `argparse` appears to be not be able to deal with repeated flags (`-e 1 -e second`) and repeated optional position args (i.e. data sources), it may error out when given valid input.
 This can be circumvented by using the `-f` flag in preference to positional arguments.
-However, we still allow positional arguments in the interest of discoverability. 
+However, we still allow positional arguments in the interest of discoverability.
 I'm open to this being a bad decision.
