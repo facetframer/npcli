@@ -65,7 +65,7 @@ def get_names_rec(node):
     elif isinstance(node, ast.ExtSlice):
         return union(map(get_names_rec, node.dims)) if node.dims else set()
     else:
-        raise ValueError(node)
+        raise ValueError(node) #pragma: no cover
 
 def uses_stdin(expr):
     names = get_names(expr)
@@ -118,7 +118,7 @@ def run(stdin_stream, args):
     args.module = args.module or []
 
     if args.debug:
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(level=logging.DEBUG) # pragma: no cover
 
     module_dict = dict()
     for m in args.module:
@@ -146,26 +146,26 @@ def run(stdin_stream, args):
     expressions = ([args.expr] if args.expr else []) + (args.more_expressions or [])
 
     if not expressions:
-        return
+        raise ValueError('No expressions') # pragma: no cover
 
-    if uses_stdin(expressions[0]):
-        data = read_data(args.input_format, stdin_stream)
-        context.update(data=data, d=data)
-    else:
-        LOGGER.debug('takes no data')
 
     if args.data_sources and args.flag_data_sources:
-        raise Exception("Either use -f for every source or None")
+        raise ValueError("Either use -f for every source or None")
 
     if args.flag_data_sources:
         args.data_sources = args.flag_data_sources
-
 
     if args.code:
         # Lazy import because this is big
         import autopep8
         program = '\n'.join(expressions) + '\n'
         return autopep8.fix_string(program)
+
+    if uses_stdin(expressions[0]):
+        data = read_data(args.input_format, stdin_stream)
+        context.update(data=data, d=data)
+    else:
+        LOGGER.debug('takes no data')
 
     for index, source in enumerate(args.data_sources):
         with open(source) as stream:

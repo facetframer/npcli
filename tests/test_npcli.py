@@ -34,11 +34,54 @@ class NpcliTest(unittest.TestCase):
     def test_complex_expressions(self):
         self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd[1]')
         self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd[1:]')
+        self.run_cli(io.BytesIO(b'1 11\n2 22\n3 33\n'), '--repr',  'd[0,0]')
+        self.run_cli(io.BytesIO(b'1 11\n2 22\n3 33\n'), '--repr',  'd[::-1,::1]')
+
         self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  '(d,)')
         self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  '[d]')
+        self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  '[x+1 for x in d]')
         self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd + 1')
+        self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr', '--', '-d')
+        self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  '"hello"')
+        self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd < 2')
         self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd ** 2')
         self.run_cli(io.BytesIO(b'1\n2\n3\n'), '--repr',  'd.sum()')
+
+    def test_assignment(self):
+        result = self.run_cli(io.BytesIO(b'1\n'),  'a = d', '-e', 'a')
+        self.assertEquals(result, '1.0\n')
+
+    def test_modules(self):
+        result = self.run_cli(io.BytesIO(b'-1\n'), '-m', 'numpy', 'numpy.abs(d)')
+        self.assertEquals(result, '1.0\n')
+
+    def test_kitchen(self):
+        result = self.run_cli(io.BytesIO(b'-1\n'), '-K', 'abs(d)')
+        self.assertEquals(result, '1.0\n')
+
+    def test_noop(self):
+        result = self.run_cli(io.BytesIO(b'-1\n'))
+        self.assertEquals(result, '1.0\n')
+
+    def test_flagged_source(self):
+        read, write = os.pipe()
+        stream = os.fdopen(write, 'w')
+        stream.write('1\n2\n')
+        stream.close()
+        result = self.run_cli(None, 'd1', '-f', '/dev/fd/{}'.format(read))
+        self.assertEquals(result, '1.0\n2.0\n')
+
+    def test_sources(self):
+        with self.assertRaises(ValueError):
+            self.run_cli(io.BytesIO(b'-1\n'), '-f', '/dev/null', 'd1 + d2', '/dev/null')
+
+    def test_code(self):
+        result = self.run_cli(None, 'd', '--code')
+        self.assertEquals(result, 'd\n')
+
+    def test_null(self):
+        result = self.run_cli(io.BytesIO(b'-1\n'), '-n', 'd')
+        self.assertEquals(result, '')
 
     def test_named_sources(self):
         one_read, one_write = os.pipe()
