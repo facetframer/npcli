@@ -201,7 +201,7 @@ def run(stdin_stream, args):
     elif args.raw:
         return (result,)
     elif args.output_format:
-        if args.output_format == 'str':
+        if args.output_format == "str":
             return result
         else:
             return (numpy.array(result, dtype=args.output_format),)
