@@ -72,7 +72,7 @@ def uses_stdin(expr):
     return 'd' in names or 'data' in names
 
 def build_parser():
-    parser = argparse.ArgumentParser(description='Interact with numpy from the command line')
+    parser = argparse.ArgumentParser(prog='npcli', description='Interact with numpy from the command line')
     parser.add_argument('expr', type=str, help='Expression involving d, a numpy array')
     parser.add_argument(
         '--expr',
