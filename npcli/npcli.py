@@ -1,12 +1,14 @@
 #!/usr/bin/python
 
 # make code as python 3 compatible as possible
-from __future__ import absolute_import, division, print_function, unicode_literals
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 import argparse
+import ast
+import json
 import logging
 import sys
-import ast
 from io import BytesIO
 
 import numpy
@@ -86,7 +88,7 @@ def build_parser():
     parser.add_argument('--code', action='store_true', default=False, help='Produce python code rather than running')
     parser.add_argument('--debug', action='store_true', help='Print debug output')
     parser.add_argument('data_sources', type=str, nargs='*', help='Files to read data from. Stored in d1, d2 etc')
-    parser.add_argument('--input-format', '-I', type=str, help='Dtype of the data read in. "lines" for a list of lines. "str" for a string. "csv" for csv, "pandas" for a pandas csv')
+    parser.add_argument('--input-format', '-I', type=str, help='Dtype of the data read in. "lines" for a list of lines. "str" for a string. "csv" for csv, "pandas" for a pandas csv, "json" for json data ')
     parser.add_argument('--kitchen-sink', '-K', action='store_true', help='Import a lot of useful things into the execution scope')
     parser.add_argument('--name', '-N', nargs=2, action='append', type=str, help='A named data source')
 
@@ -246,6 +248,8 @@ def read_data(input_format, stream):
         data = [x.decode('utf8').strip('\n') for x in stream.readlines()]
     elif input_format == 'str':
         return stream.read()
+    elif input_format == 'json':
+        return json.loads(stream.read())
     elif input_format == 'csv':
         data = numpy.genfromtxt(stream, delimiter=',')
     elif input_format == 'pandas':
