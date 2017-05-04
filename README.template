@@ -4,23 +4,28 @@ Interact with python's numpy package from the command line. Useful as part of pi
 
 # Attribution
 
-Influenced by and liberally taking ideas from from Wes Turner's [pyline](https://github.com/westurner/pyline) utility.
+Influenced by, and liberally taking ideas from from Wes Turner's [pyline](https://github.com/westurner/pyline) utility.
+
+# Requirements
+
+For convenience certain features provide interfaces to `pandas` and `matplotlib`.
+These are not installed by default to minimize the number of dependencies for basic usage.
 
 # Motivation
 
-Command line pipelines are wonderful things. Some nice properties include:
+Command line pipelines are wonderful things. Some nice properties they have include:
 
 * Complete searchable history of everything you have run
-* Being able to use commands you already know instead of libraries that may not exist
+* Being able to use shell commands you already know rather than learning new python libraries
 * Being able to compose disparate commands through string input and output
 * Completion
 
 However the command line is sometimes slightly... lacking. Particularly when it comes to
-things like maths. There are ad-hoc, single purpose commands that can help, things like
+things like maths. There are ad-hoc, single purpose commands that can help: things like
 `feedgnuplot` or `sum` or similar, but they will always only solve one problem.
 
 Here we try to solve a general class of problems by welding python (any numpy)
-to the command line so that anything you can do in python can be done
+to the command line.  This means that anything you can do in python can be done
 in a way that easily interacts with a the command line.
 
 # Examples
@@ -63,10 +68,9 @@ npcli --name one <(seq 100) --name two <(seq 201 300) 'one + two'
 * *xargs*
 * *awk*
 * *perl command line invocation*
-* *pyline*
-* *pyp*
-* *Rio* - A similar tool in R (that gives you access to the marverlously succinct ggplot!)
-
+* [pyline](https://github.com/westurner/pyline)
+* [pyp](https://code.google.com/archive/p/pyp/)
+* [Rio] (https://cran.r-project.org/web/packages/rio/README.html): A similar tool in R (useful with ggplot)
 
 # Contributing
 
@@ -76,10 +80,12 @@ There are unit tests: you can run them with
 python setup.py test
 ```
 
-This run the tests with `tox` for a quicker test run use:
+This will run the tests using `tox`, testing the installation commands and different versions of python.
+
+For a quicker test run use:
 
 ```
-nosetests tess
+nosetests test
 ```
 
 # Caveats
@@ -92,13 +98,10 @@ I'm open to this being a bad decision.
 
 # Just open a file for goodness sake
 
-It is very easy to do more on the command line that you should.
-Most programming languages are Turing-Complete and everything that is done
-here can be done in a python file with subprocesses. Above a certain size one-liners
-become unwieldy
+It is very easy to do more on the command line than one should.
+Everything that is done here can be done in a python file with calls to `subprocess`.
+Above a certain size, one-liners become unwieldy
 
-The cost of doing this is that you actually have to go to the effort of opening file,
-and doing these sort of things in files can take a lot of typing.
+The cost of scripting in python is that you actually have to go to the effort of opening file, and doing the kind of things npcli automates can take quite a lot of boilerplate.
 
-You also lose the simplicity of the "modify", "press enter", "see if it works" cycle
-that the command line gives you.
+One also loses the simplicity of the shell debug cycle: "modify", "press enter", "see if it works".
