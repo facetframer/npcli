@@ -109,7 +109,8 @@ def build_parser():
     return parser
 
 
-def parse_named_source(format, (name, source)):
+def parse_named_source(format, name_and_source):
+    (name, source) = name_and_source
     with open(source) as stream:
         data = read_data(format, stream)
         return (name, data)
@@ -161,7 +162,8 @@ def run(stdin_stream, args):
         # Lazy import because this is big
         import autopep8
         program = '\n'.join(expressions) + '\n'
-        return autopep8.fix_string(program)
+        result = autopep8.fix_code(program).encode('utf8')
+        return result,
 
     if uses_stdin(expressions[0]):
         data = read_data(args.input_format, stdin_stream)

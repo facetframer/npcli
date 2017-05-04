@@ -49,19 +49,15 @@ class NpcliTest(unittest.TestCase):
 
     def test_assignment(self):
         result = self.run_cli(io.BytesIO(b'1\n'),  'a = d', '-e', 'a')
-        self.assertEquals(result, '1.0\n')
+        self.assertEquals(result, b'1.0\n')
 
     def test_modules(self):
         result = self.run_cli(io.BytesIO(b'-1\n'), '-m', 'numpy', 'numpy.abs(d)')
-        self.assertEquals(result, '1.0\n')
+        self.assertEquals(result, b'1.0\n')
 
     def test_kitchen(self):
         result = self.run_cli(io.BytesIO(b'-1\n'), '-K', 'abs(d)')
-        self.assertEquals(result, '1.0\n')
-
-    def test_noop(self):
-        result = self.run_cli(io.BytesIO(b'-1\n'))
-        self.assertEquals(result, '1.0\n')
+        self.assertEquals(result, b'1.0\n')
 
     def test_flagged_source(self):
         read, write = os.pipe()
@@ -69,7 +65,7 @@ class NpcliTest(unittest.TestCase):
         stream.write('1\n2\n')
         stream.close()
         result = self.run_cli(None, 'd1', '-f', '/dev/fd/{}'.format(read))
-        self.assertEquals(result, '1.0\n2.0\n')
+        self.assertEquals(result, b'1.0\n2.0\n')
 
     def test_sources(self):
         with self.assertRaises(ValueError):
@@ -77,11 +73,11 @@ class NpcliTest(unittest.TestCase):
 
     def test_code(self):
         result = self.run_cli(None, 'd', '--code')
-        self.assertEquals(result, 'd\n')
+        self.assertEquals(result, b'd\n')
 
     def test_null(self):
         result = self.run_cli(io.BytesIO(b'-1\n'), '-n', 'd')
-        self.assertEquals(result, '')
+        self.assertEquals(result, b'')
 
     def test_named_sources(self):
         one_read, one_write = os.pipe()
@@ -104,9 +100,4 @@ class NpcliTest(unittest.TestCase):
             '--name', "two", two_file,
             'one + two')
 
-        self.assertEquals(result, '11.0\n22.0\n')
-
-
-
-
-
+        self.assertEquals(result, b'11.0\n22.0\n')
