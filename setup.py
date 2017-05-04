@@ -23,7 +23,7 @@ setuptools.setup(
     license='GPLv3',
     keywords='',
     url='',
-    install_requires=['numpy'],
+    install_requires=['numpy', 'autopep8'],
     packages=[],
     entry_points={
         'console_scripts': ['npcli=npcli.npcli:main']
