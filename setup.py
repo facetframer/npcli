@@ -12,7 +12,7 @@ class ToxTest(TestCommand):
     def run_tests(self):
         import tox
         tox.cmdline()
-
+        tox.cmdline(['-c', 'tox-minimal.ini'])
 
 setuptools.setup(
     name='npcli',
