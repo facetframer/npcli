@@ -103,6 +103,22 @@ optional arguments:
 
 ```
 
+# Installation
+
+
+Bleeding edge
+
+```
+pip install git+https://github.com/facetframer/npcli#egg=npcli
+```
+
+Stable release
+
+```
+pip install git+git://github.com/facetframer/npcli@release-0.1.0#egg=npcli
+```
+
+
 # Alternatives and prior work
 
 * *xargs*
