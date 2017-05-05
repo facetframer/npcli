@@ -13,6 +13,7 @@ Influenced by, and liberally taking ideas from from Wes Turner's [pyline](https:
 
 For convenience certain features provide interfaces to `pandas` and `matplotlib`.
 These are not installed by default to minimize the number of dependencies for basic usage.
+Tested with python 2.7 and python 3.5.
 
 # Motivation
 
