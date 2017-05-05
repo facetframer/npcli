@@ -1,3 +1,5 @@
+[![Travis CI](https://travis-ci.org/facetframer/npcli.svg)](https://travis-ci.org/facetframer/npcli)
+
 # Npcli
 
 Interact with python's numpy package from the command line. Useful as part of pipelines.
