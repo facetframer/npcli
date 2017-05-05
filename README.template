@@ -66,6 +66,12 @@ npcli --name one <(seq 100) --name two <(seq 201 300) 'one + two'
 {usage}
 ```
 
+# Installation
+
+```
+pip install git+https://github.com/facetframer/npcli#egg=npcli
+```
+
 # Alternatives and prior work
 
 * *xargs*
