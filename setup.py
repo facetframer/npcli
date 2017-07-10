@@ -17,8 +17,8 @@ class ToxTest(TestCommand):
 setuptools.setup(
     name='npcli',
     version=0.1,
-    author='Tal Wrii',
-    author_email='talwrii@gmail.com',
+    author='Facet Framer',
+    author_email='facetframer@gmail.com',
     description='',
     license='GPLv3',
     keywords='',
