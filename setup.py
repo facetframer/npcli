@@ -24,7 +24,7 @@ setuptools.setup(
     keywords='',
     url='',
     install_requires=['numpy', 'autopep8'],
-    packages=[],
+    packages=['npcli'],
     entry_points={
         'console_scripts': ['npcli=npcli.npcli:main']
     },
