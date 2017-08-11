@@ -88,7 +88,7 @@ def build_parser():
     parser.add_argument('--code', action='store_true', default=False, help='Produce python code rather than running')
     parser.add_argument('--debug', action='store_true', help='Print debug output')
     parser.add_argument('data_sources', type=str, nargs='*', help='Files to read data from. Stored in d1, d2 etc')
-    parser.add_argument('--input-format', '-I', type=str, help='Dtype of the data read in. "lines" for a list of lines. "str" for a string. "csv" for csv, "pandas" for a pandas csv, "json" for json data ')
+    parser.add_argument('--input-format', '-I', help='Dtype of the data read in. "lines" for a list of lines. "str" for a string. "csv" for csv, "pandas" for a pandas csv, "json" for json data ', choices=data_input(), default='default')
     parser.add_argument('--kitchen-sink', '-K', action='store_true', help='Import a lot of useful things into the execution scope')
     parser.add_argument('--name', '-N', nargs=2, action='append', type=str, help='A named data source')
 
@@ -97,7 +97,7 @@ def build_parser():
         '--output-format',
         '-O',
         type=str,
-        help='Output as a flat numpy array with this format. "str" for a string')
+        help='Output data in this format. "str" for a string, "json" for json, "json-pretty" for pretty printed json with sorted keys')
     format_group.add_argument('--raw', action='store_true', help='Result is a string that should be written to standard out')
     format_group.add_argument('--repr', '-D', action='store_true', help='Output a repr of the result. Often used for _D_ebug')
     format_group.add_argument('--no-result', '-n', action='store_true', help="Discard result")
@@ -248,27 +248,27 @@ def maybe_float(x):
     except ValueError:
         return x
 
+def data_input():
+    return  dict(
+        lines=lambda stream: [x.decode('utf8').strip('\n') for x in stream.readlines()],
+        str=lambda x: x.read(),
+        json=lambda x: json.loads(x.read()),
+        csv=lambda x: numpy.genfromtxt(x, delimiter=','),
+        pandas=read_pandas_csv,
+        default=read_default)
+
+def read_pandas_csv(stream):
+    import pandas
+    return pandas.DataFrame.from_csv(stream)
 
 def read_data(input_format, stream):
-    if input_format == 'lines':
-        data = [x.decode('utf8').strip('\n') for x in stream.readlines()]
-    elif input_format == 'str':
-        return stream.read()
-    elif input_format == 'json':
-        return json.loads(stream.read())
-    elif input_format == 'csv':
-        data = numpy.genfromtxt(stream, delimiter=',')
-    elif input_format == 'pandas':
-        import pandas
-        data = pandas.DataFrame.from_csv(stream)
-    else is input_format is None:
-        data = numpy.array([list(map(maybe_float, line.split())) for line in stream.read().splitlines()])
-        if len(data.shape) > 1 and data.shape[1] == 1:
-            # Treat a stream of numbers a 1-D array
-            data = data.flatten()
-    else:
-        raise NotImplementedError()
+    return data_input()[input_format](stream)
 
+def read_default(stream):
+    data = numpy.array([list(map(maybe_float, line.split())) for line in stream.read().splitlines()])
+    if len(data.shape) > 1 and data.shape[1] == 1:
+        # Treat a stream of numbers a 1-D array
+        data = data.flatten()
     LOGGER.debug('Data length: %s ', len(data))
 
     if hasattr(data, 'shape'):
