@@ -203,6 +203,10 @@ def run(stdin_stream, args):
     elif args.output_format:
         if args.output_format == "str":
             return result
+        elif args.output_format == "json":
+            return json.dumps(result)
+        elif args.output_format == "json-pretty":
+            return json.dumps(result, indent=4, sort_keys=True)
         else:
             return (numpy.array(result, dtype=args.output_format),)
     elif args.repr:
