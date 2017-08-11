@@ -257,14 +257,13 @@ def read_data(input_format, stream):
     elif input_format == 'pandas':
         import pandas
         data = pandas.DataFrame.from_csv(stream)
-    elif input_format is not None:
-        data = numpy.fromstring(stream.read(), dtype=input_format)
-
-    else:
+    else is input_format is None:
         data = numpy.array([list(map(maybe_float, line.split())) for line in stream.read().splitlines()])
         if len(data.shape) > 1 and data.shape[1] == 1:
             # Treat a stream of numbers a 1-D array
             data = data.flatten()
+    else:
+        raise NotImplementedError()
 
     LOGGER.debug('Data length: %s ', len(data))
 
