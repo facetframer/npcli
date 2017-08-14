@@ -162,7 +162,10 @@ def run(stdin_stream, args):
         # Lazy import because this is big
         import autopep8
         program = '\n'.join(expressions) + '\n'
-        result = autopep8.fix_code(program).encode('utf8')
+        if sys.version_info[0] == 3:
+            result = autopep8.fix_code(program).encode('utf8')
+        else:
+            result = program
         return result,
 
     if uses_stdin(expressions[0]):
