@@ -258,7 +258,12 @@ def data_input():
         json=lambda x: json.loads(x.read()),
         csv=lambda x: numpy.genfromtxt(x, delimiter=','),
         pandas=read_pandas_csv,
+        pandas_json=read_pandas_json,
         default=read_default)
+
+def read_pandas_json(stream):
+    import pandas.io.json
+    return pandas.io.json.read_json(stream)
 
 def read_pandas_csv(stream):
     import pandas
