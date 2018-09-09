@@ -27,6 +27,11 @@ def get_names_rec(node):
     if isinstance(node, ast.Call):
         arg_names = map(get_names, node.args)
         return get_names_rec(node.func) | union(arg_names)
+    elif isinstance(node, ast.GeneratorExp):
+        return set()
+    elif isinstance(node, ast.Lambda):
+        # this is incorrect
+        return set()
     elif isinstance(node, ast.Module):
         return union(map(get_names_rec, node.body))
     elif isinstance(node, ast.Expr):
