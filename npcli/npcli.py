@@ -88,7 +88,7 @@ def build_parser():
     parser.add_argument('--code', action='store_true', default=False, help='Produce python code rather than running')
     parser.add_argument('--debug', action='store_true', help='Print debug output')
     parser.add_argument('data_sources', type=str, nargs='*', help='Files to read data from. Stored in d1, d2 etc')
-    parser.add_argument('--input-format', '-I', help='Dtype of the data read in. "lines" for a list of lines. "str" for a string. "csv" for csv, "pandas" for a pandas csv, "json" for json data ', choices=data_input(), default='default')
+    parser.add_argument('--input-format', '-I', help='Dtype of the data read in', choices=data_input(), default='default')
     parser.add_argument('--kitchen-sink', '-K', action='store_true', help='Import a lot of useful things into the execution scope')
     parser.add_argument('--name', '-N', nargs=2, action='append', type=str, help='A named data source')
 
